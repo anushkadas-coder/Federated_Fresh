@@ -1,0 +1,5 @@
+The standard SSH key rotation policy requires keys to be rotated every 30 days.
+Employee IT support tickets must be submitted through the internal Jira portal.
+The Q3 revenue report indicates a 15% growth in enterprise software sales.
+The VPN requires multi-factor authentication (MFA) via the Duo Mobile app for all external connections.
+Contractor API access tokens expire automatically after 12 hours of inactivity.

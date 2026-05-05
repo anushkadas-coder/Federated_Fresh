@@ -1,0 +1,33 @@
+{"timestamp": "2026-05-04 18:32:22", "event": "QUERY_EXECUTED", "query": "who is the president of Mars?", "confidence": "15.0%", "latency": "0.460s", "status": "REJECTED"}
+{"timestamp": "2026-05-04 18:33:34", "event": "QUERY_EXECUTED", "query": "who is the president of India?", "confidence": "19.5%", "latency": "0.072s", "status": "REJECTED"}
+{"timestamp": "2026-05-04 18:41:35", "event": "QUERY_EXECUTED", "query": "Who is the president of India?", "confidence": "19.5%", "latency": "0.401s", "status": "RESOLVED", "source": "GLOBAL_LLM"}
+{"timestamp": "2026-05-04 18:42:04", "event": "QUERY_EXECUTED", "query": "Who is the president of USA?", "confidence": "14.5%", "latency": "0.039s", "status": "RESOLVED", "source": "GLOBAL_LLM"}
+{"timestamp": "2026-05-04 18:42:15", "event": "QUERY_EXECUTED", "query": "Who is the president of US?", "confidence": "14.5%", "latency": "0.025s", "status": "RESOLVED", "source": "GLOBAL_LLM"}
+{"timestamp": "2026-05-04 18:42:25", "event": "QUERY_EXECUTED", "query": "Who is the president of Pakistan?", "confidence": "20.3%", "latency": "0.043s", "status": "RESOLVED", "source": "GLOBAL_LLM"}
+{"timestamp": "2026-05-04 18:42:40", "event": "QUERY_EXECUTED", "query": "Who is the president of Bangladesh?", "confidence": "19.6%", "latency": "0.020s", "status": "RESOLVED", "source": "GLOBAL_LLM"}
+{"timestamp": "2026-05-04 18:42:57", "event": "QUERY_EXECUTED", "query": "Hi", "confidence": "13.9%", "latency": "0.027s", "status": "RESOLVED", "source": "GLOBAL_LLM"}
+{"timestamp": "2026-05-04 18:46:47", "event": "QUERY_EXECUTED", "query": "hi", "confidence": "13.9%", "latency": "0.054s", "status": "RESOLVED", "source": "GLOBAL_LLM"}
+{"timestamp": "2026-05-04 18:48:04", "event": "QUERY_EXECUTED", "query": "Hi", "confidence": "13.9%", "latency": "0.051s", "status": "RESOLVED", "source": "GLOBAL_LLM"}
+{"timestamp": "2026-05-04 18:52:55", "query": "hi", "confidence": "0.0%", "latency": "0.077s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:01:11", "query": "Hi", "confidence": "0.0%", "latency": "0.004s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:08:59", "query": "hi", "confidence": "0.0%", "latency": "0.064s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:16:45", "query": "Hi", "confidence": "0.0%", "latency": "0.066s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:17:08", "query": "how are you?", "confidence": "0.0%", "latency": "0.003s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:20:07", "query": "Hi", "confidence": "0.0%", "latency": "0.002s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:20:46", "query": "How are you?", "confidence": "0.0%", "latency": "0.003s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:20:59", "query": "im fine", "confidence": "0.0%", "latency": "0.002s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:22:36", "query": "what is your name", "confidence": "0.0%", "latency": "0.003s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:23:00", "query": "full form of DBMS", "confidence": "0.0%", "latency": "0.002s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:23:15", "query": "PM of INDIA", "confidence": "0.0%", "latency": "0.003s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:24:52", "query": "hi", "confidence": "0.0%", "latency": "0.007s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:25:51", "query": "what is today's date", "confidence": "0.0%", "latency": "0.003s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 19:30:16", "query": "what is today's date", "confidence": "0.0%", "latency": "0.009s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 20:54:48", "query": "What is the date today?", "confidence": "0.0%", "latency": "0.009s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 21:04:02", "query": "hi", "confidence": "0.0%", "latency": "0.007s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 21:04:30", "query": "Hi, I am Anushka Das.", "confidence": "0.0%", "latency": "0.003s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 21:04:55", "query": "What is my name?", "confidence": "0.0%", "latency": "0.003s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 21:05:10", "query": "What is today's date?", "confidence": "0.0%", "latency": "0.002s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 21:05:32", "query": "12 + 12 = ", "confidence": "0.0%", "latency": "0.003s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 21:05:54", "query": "SQL full form", "confidence": "0.0%", "latency": "0.002s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 21:06:46", "query": "definition of SQL", "confidence": "0.0%", "latency": "0.003s", "source": "GLOBAL_KNOWLEDGE"}
+{"timestamp": "2026-05-04 21:07:44", "query": "Capital of Kolkata", "confidence": "0.0%", "latency": "0.002s", "source": "GLOBAL_KNOWLEDGE"}

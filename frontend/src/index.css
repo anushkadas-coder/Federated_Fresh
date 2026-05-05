@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#020202] overflow-x-hidden;
+  }
+}
+
+/* CRT Screen Effect */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.terminal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+              linear-gradient(90deg, rgba(16, 185, 129, 0.02), rgba(16, 185, 129, 0.01), rgba(16, 185, 129, 0.02));
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.scanline {
+  width: 100%;
+  height: 2px;
+  background: rgba(16, 185, 129, 0.1);
+  position: absolute;
+  bottom: 100%;
+  animation: scanline 10s linear infinite;
+  z-index: 101;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #020202;
+}
+::-webkit-scrollbar-thumb {
+  background: #10b981;
+  border-radius: 10px;
+}

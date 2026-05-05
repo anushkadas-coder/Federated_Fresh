@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Federated Fresh // TERMINAL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap');
+
+        :root {
+            --neon-green: #00ff66;
+            --dark-green: #003311;
+            --bg-black: #050505;
+            --panel-black: #0a0a0a;
+            --grid-color: rgba(0, 255, 102, 0.05);
+        }
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: var(--bg-black);
+            color: var(--neon-green);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* Graphical Grid Background */
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 30px 30px;
+            overflow: hidden;
+        }
+
+        /* CRT Scanline Overlay */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 950px;
+            height: 85vh;
+            background-color: var(--panel-black);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+            border: 1px solid var(--neon-green);
+            /* 3D Layered glowing shadows */
+            box-shadow: 
+                8px 8px 0px rgba(0, 255, 102, 0.1),
+                16px 16px 0px rgba(0, 255, 102, 0.05),
+                0 0 30px rgba(0, 255, 102, 0.15),
+                inset 0 0 20px rgba(0, 255, 102, 0.05);
+        }
+
+        .header {
+            padding: 15px 25px;
+            background: var(--dark-green);
+            border-bottom: 2px solid var(--neon-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-transform: uppercase;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px var(--neon-green);
+        }
+
+        .blink {
+            animation: blinker 1s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-green) var(--panel-black);
+        }
+
+        .chat-box::-webkit-scrollbar { width: 8px; }
+        .chat-box::-webkit-scrollbar-track { background: var(--panel-black); }
+        .chat-box::-webkit-scrollbar-thumb { background-color: var(--neon-green); border-radius: 0; }
+
+        .message {
+            max-width: 85%;
+            padding: 12px 18px;
+            line-height: 1.6;
+            position: relative;
+            border-left: 2px solid transparent;
+            font-size: 0.95rem;
+        }
+
+        .user-msg {
+            align-self: flex-end;
+            color: #fff;
+            border-right: 2px solid var(--neon-green);
+            border-left: none;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 102, 0.1));
+        }
+
+        .user-msg::before {
+            content: "USER_COMMAND // ";
+            display: block;
+            font-size: 0.7rem;
+            color: var(--neon-green);
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .ai-msg {
+            align-self: flex-start;
+            border-left: 2px solid var(--neon-green);
+            background: linear-gradient(90deg, rgba(0, 255, 102, 0.05), transparent);
+        }
+
+        .ai-msg::before {
+            content: "AI_RESPONSE // ";
+            display: block;
+            font-size: 0.7rem;
+            color: var(--neon-green);
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .source-badge {
+            font-size: 0.65rem;
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: var(--bg-black);
+            padding: 2px 8px;
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            letter-spacing: 1px;
+        }
+
+        .input-area {
+            padding: 20px;
+            background-color: var(--bg-black);
+            border-top: 1px solid var(--neon-green);
+            display: flex;
+            gap: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 15px 20px;
+            background: transparent;
+            border: 1px solid rgba(0, 255, 102, 0.4);
+            color: var(--neon-green);
+            font-family: 'Fira Code', monospace;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--neon-green);
+            box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.2);
+            background: rgba(0, 255, 102, 0.02);
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(0, 255, 102, 0.3);
+        }
+
+        button {
+            padding: 0 25px;
+            background-color: transparent;
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background-color: var(--neon-green);
+            color: var(--bg-black);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.5);
+        }
+
+        .upload-btn {
+            border-style: dashed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <h1>> FEDERATED_FRESH_CORE.exe</h1>
+            <div style="font-size: 0.8rem;"><span class="blink">█</span> SYS.ONLINE</div>
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            <div class="message ai-msg">Neural interface established. Awaiting input parameters...</div>
+        </div>
+
+        <div class="input-area">
+            <input type="file" id="fileInput" style="display: none;" onchange="handleFileUpload()">
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">[ MOUNT_FILE ]</button>
+            <input type="text" id="promptInput" placeholder="C:\Users\Admin> Type command..." onkeypress="handleEnter(event)" autocomplete="off">
+            <button onclick="sendPrompt()">EXECUTE</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "";
+        const chatBox = document.getElementById('chatBox');
+        const promptInput = document.getElementById('promptInput');
+
+        function appendMessage(text, sender, source = null) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender === 'user' ? 'user-msg' : 'ai-msg'}`;
+            msgDiv.innerText = text;
+            
+            if (source && sender === 'ai') {
+                const badge = document.createElement('span');
+                badge.className = 'source-badge';
+                badge.innerText = `[${source}]`;
+                msgDiv.appendChild(badge);
+            }
+            
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function sendPrompt() {
+            const text = promptInput.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            promptInput.value = '';
+            
+            const loadingId = 'loading-' + Date.now();
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message ai-msg blink';
+            loadingDiv.id = loadingId;
+            loadingDiv.innerText = 'Processing query...';
+            chatBox.appendChild(loadingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const response = await fetch(`${API_URL}/stream`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: text })
+                });
+                
+                const data = await response.json();
+                document.getElementById(loadingId).remove();
+                appendMessage(data.text, 'ai', data.source);
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                appendMessage("ERR: Connection refused. Verify Uvicorn status.", 'ai', 'SYS_ERROR');
+            }
+        }
+
+        async function handleFileUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            appendMessage(`Mounting volume: ${file.name}...`, 'user');
+            
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const response = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                appendMessage(`System response: ${data.message}`, 'ai', 'VAULT_IO');
+            } catch (err) {
+                appendMessage("ERR: Upload sequence failed.", 'ai', 'SYS_ERROR');
+            }
+            fileInput.value = ''; 
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendPrompt();
+        }
+    </script>
+</body>
+</html>
