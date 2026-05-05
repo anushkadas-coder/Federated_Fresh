@@ -56,7 +56,7 @@ The interface isn't just a skin; it's a specialized terminal environment:
 ├── requirements.txt    # Cloud-optimized dependencies (No PyTorch)
 ├── .env                # Git-ignored API secrets
 └── chroma_db/          # Persistent Vector Storage
-
+```
 ---
 
 ## 🧠 Key Engineering Challenges
