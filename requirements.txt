@@ -4,7 +4,6 @@ python-multipart
 pydantic
 PyPDF2
 chromadb
-sentence-transformers
 duckduckgo-search
 google-genai
 python-dotenv

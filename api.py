@@ -1,18 +1,15 @@
-from fastapi import FastAPI, UploadFile, File, BackgroundTasks
-from fastapi.responses import FileResponse
 import json, time, io, os, re, uvicorn
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import PyPDF2
 import chromadb
-from sentence_transformers import SentenceTransformer
 from duckduckgo_search import DDGS
 from google import genai 
 from google.genai import types
-
-# --- IMPROVEMENT 2: SECURE API KEYS ---
 from dotenv import load_dotenv
+
 load_dotenv() 
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 
@@ -28,14 +25,22 @@ active_image = None
 # --- INITIALIZATION ---
 client = genai.Client(api_key=GEMINI_KEY) if GEMINI_KEY else None
 
-print("[SYSTEM] Booting Federated Core...")
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
+print("[SYSTEM] Booting Federated Core (Cloud Embedding Mode)...")
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 collection = chroma_client.get_or_create_collection(name="gpt_terminal_v6")
 
-# --- IMPROVEMENT 3: SMARTER RAG CHUNKING ---
+def get_gemini_embeddings(text_list):
+    """Offloads heavy embedding generation to Google's cloud API"""
+    embeddings = []
+    for text in text_list:
+        res = client.models.embed_content(
+            model="text-embedding-004", 
+            contents=text
+        )
+        embeddings.append(res.embeddings[0].values)
+    return embeddings
+
 def smart_chunk_text(text, max_length=500):
-    """Splits text by paragraphs instead of cutting words in half."""
     paragraphs = re.split(r'\n\n+', text)
     chunks, current_chunk = [], ""
     for p in paragraphs:
@@ -47,7 +52,6 @@ def smart_chunk_text(text, max_length=500):
     if current_chunk: chunks.append(current_chunk.strip())
     return [c for c in chunks if c]
 
-# --- IMPROVEMENT 4: NON-BLOCKING BACKGROUND TASKS ---
 def process_file_background(filename: str, content: bytes, is_pdf: bool):
     text = ""
     if is_pdf:
@@ -63,11 +67,16 @@ def process_file_background(filename: str, content: bytes, is_pdf: bool):
         ids = [f"{filename}_{i}_{time.time()}" for i in range(len(chunks))]
         collection.add(
             documents=chunks, 
-            embeddings=embedder.encode(chunks).tolist(), 
+            embeddings=get_gemini_embeddings(chunks), 
             ids=ids, 
             metadatas=[{"source": filename}]*len(chunks) 
         )
     print(f"[VAULT] {filename} completely processed and stored in background.")
+
+@app.get("/")
+async def serve_ui():
+    """Serves the main terminal interface."""
+    return FileResponse("index.html")
 
 @app.get("/files")
 async def list_files():
@@ -87,11 +96,7 @@ async def upload(background_tasks: BackgroundTasks, file: UploadFile = File(...)
             return {"status": "ok", "message": "Image active"}
         
         is_pdf = file.filename.lower().endswith('.pdf')
-        
-        # Hand the heavy lifting off to the background task
         background_tasks.add_task(process_file_background, file.filename, content, is_pdf)
-        
-        # Instantly return success to the UI
         return {"status": "processing", "message": "File sent to background queue"}
     except Exception as e: return {"status": "error", "message": str(e)}
 
@@ -112,9 +117,12 @@ async def process_ai(request: QueryRequest):
 
     if source_used == "AI_CORE":
         if collection.count() > 0:
-            res = collection.query(query_embeddings=embedder.encode([request.prompt]).tolist(), n_results=3)
-            valid = [doc for doc, dist in zip(res['documents'][0], res['distances'][0]) if dist < 1.4]
-            if valid: ctx, source_used = "\n...\n".join(valid), "SECURE_VAULT"
+            try:
+                res = collection.query(query_embeddings=get_gemini_embeddings([request.prompt]), n_results=3)
+                valid = [doc for doc, dist in zip(res['documents'][0], res['distances'][0]) if dist < 1.4]
+                if valid: ctx, source_used = "\n...\n".join(valid), "SECURE_VAULT"
+            except Exception as e:
+                print(f"RAG Error: {e}")
         
         if source_used == "AI_CORE":
             try:
@@ -128,16 +136,12 @@ async def process_ai(request: QueryRequest):
     elif source_used == "SECURE_VAULT": sys_msg += f"\n\nVAULT DATA: {ctx}"
 
     try:
-        target_model = "gemini-2.5-flash" # Or whichever model you are using now
-        
-        # --- IMPROVEMENT 1: FIXING AMNESIA (CHAT HISTORY) ---
+        target_model = "gemini-2.5-flash" 
         formatted_contents = []
         
-        # Load the last 4 messages (2 turns) to keep context light and fast
         for role, text in chat_history[-4:]: 
             formatted_contents.append(types.Content(role=role, parts=[types.Part.from_text(text=text)]))
             
-        # Build the current prompt
         current_prompt_text = f"{sys_msg}\n\n{request.prompt}"
         current_parts = []
         
@@ -148,14 +152,12 @@ async def process_ai(request: QueryRequest):
         current_parts.append(types.Part.from_text(text=current_prompt_text))
         formatted_contents.append(types.Content(role="user", parts=current_parts))
 
-        # Generate response using full history
         response = client.models.generate_content(
             model=target_model,
             contents=formatted_contents
         )
         ans = response.text
         
-        # Save this interaction to memory
         chat_history.append(("user", request.prompt))
         chat_history.append(("model", ans))
         
@@ -163,13 +165,11 @@ async def process_ai(request: QueryRequest):
         ans = f"Terminal Error: {e}"
 
     return {"text": ans, "latency": round(time.time() - start, 3), "source": source_used}
-@app.get("/")
-async def serve_ui():
-    """Serves the main terminal interface."""
-    return FileResponse("index.html")
 
 if __name__ == "__main__":
     if not GEMINI_KEY:
-        print("[CRITICAL ERROR] GEMINI_API_KEY missing. Did you create the .env file?")
+        print("[CRITICAL ERROR] GEMINI_API_KEY missing. Ensure it is set in Render Environment Variables.")
     else:
-        uvicorn.run(app, host="127.0.0.1", port=8080)
+        # Uses Render's dynamic port, falls back to 8080 locally
+        port = int(os.environ.get("PORT", 8080))
+        uvicorn.run(app, host="0.0.0.0", port=port)
